@@ -1,0 +1,27 @@
+[gd_scene load_steps=5 format=3 uid="uid://bl047coebvq1w"]
+
+[ext_resource type="PackedScene" uid="uid://bqp2elquwahkl" path="res://art/pill.glb" id="1_ix3gc"]
+[ext_resource type="Script" path="res://player.gd" id="1_jjcvp"]
+[ext_resource type="Script" path="res://CameraOrbit.gd" id="3_6g4ly"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_gmp8n"]
+
+[node name="Player" type="CharacterBody3D"]
+collision_mask = 6
+script = ExtResource("1_jjcvp")
+
+[node name="Pivot" type="Node3D" parent="."]
+
+[node name="player" parent="Pivot" instance=ExtResource("1_ix3gc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.00429, 0)
+shape = SubResource("CapsuleShape3D_gmp8n")
+
+[node name="CameraOrbit" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+script = ExtResource("3_6g4ly")
+
+[node name="Camera" type="Camera3D" parent="CameraOrbit"]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, -1, 0, -5)
