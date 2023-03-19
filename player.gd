@@ -3,9 +3,10 @@ extends CharacterBody3D
 # Speed in m/s
 @export var speed = 3
 # Add speed limit
-@export var speed_cap = Vector3(45, 25, 45)
+@export var speed_cap = Vector3(65, 25, 65)
 # Friction
 @export var friction = 0.06
+@export var air_friction = 0.03
 @export var friction_threshold = 0.01
 # Gravity
 @export var fall_acceleration = 55
@@ -15,17 +16,37 @@ extends CharacterBody3D
 @export var jump_count = 2
 # Support for wall jumps
 @export var wall_touched = false
+# Support for power swapping
+var power_choice = "fire"
 
 var target_velocity = Vector3.ZERO
 
-@onready var camera = get_node("CameraOrbit")
+@onready var camera = $CameraOrbit
 
 func _physics_process(delta):
-	print(jump_count)
 	# Store input direction
 	var direction = Vector3()
 	var d_button_pressed = false
 	
+	# Check for power change
+	if Input.is_action_pressed("power_1"):
+		power_choice = "fire"
+	if Input.is_action_pressed("power_2"):
+		power_choice = "ice"
+	if Input.is_action_pressed("power_3"):
+		power_choice = "web"
+	if Input.is_action_pressed("power_4"):
+		power_choice = "slime"
+		
+	match power_choice:
+		"fire":
+			print("fire")
+		"ice":
+			print("ice")
+		"web":
+			print("web")
+		"slime":
+			print("slime")
 	
 	# Check for movement input
 	if Input.is_action_pressed("move_right"):
@@ -43,6 +64,7 @@ func _physics_process(delta):
 	if Input.is_action_pressed("rizz"):
 		direction.y += -0.5
 	
+
 	
 	if direction != Vector3.ZERO:
 		direction = direction.normalized()
@@ -82,6 +104,15 @@ func _physics_process(delta):
 			target_velocity.x = 0
 		if (target_velocity.z > friction_threshold or target_velocity.z < -friction_threshold):
 			target_velocity.z -= target_velocity.z * friction
+		else:
+			target_velocity.z = 0
+	elif (not is_on_floor() and ((target_velocity.x != 0) or (target_velocity.z != 0))):
+		if (target_velocity.x > friction_threshold or target_velocity.x < -friction_threshold):
+			target_velocity.x -= target_velocity.x * air_friction
+		else:
+			target_velocity.x = 0
+		if (target_velocity.z > friction_threshold or target_velocity.z < -friction_threshold):
+			target_velocity.z -= target_velocity.z * air_friction
 		else:
 			target_velocity.z = 0
 	
